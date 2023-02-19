@@ -4,7 +4,7 @@ from sklearn.metrics import accuracy_score
 
 import torch
 from torch.autograd.variable import Variable
-from torchvision.utils import save_image
+from torchvision.utils import make_grid
 
 import matplotlib.pyplot as plt
 
@@ -25,7 +25,7 @@ def create_zeros(n_samples):
     return Variable(torch.zeros(n_samples)).to(device)
 
 # helper function to evaluate the generator
-def generate_images(generator, save_path):
+def generate_images(generator, nrow, save_path):
     # create noise_vec
     noise_vec = create_noise(64, generator.nz)
 
@@ -33,6 +33,32 @@ def generate_images(generator, save_path):
     with torch.no_grad():
         generated_images = generator(noise_vec)
         generated_images = generated_images.cpu()
+    
+    # normalize the image to bring it from (-1,1) range to (0,1)
+    generated_images = (generated_images + 1)/2
+    
+    # images in a grid
+    image_grid = make_grid(generated_images, nrow)
+    # move to last channel
+    image_grid = image_grid.permute(1, 2, 0)
+    
+    # plot images
+    plt.figure()
+    plt.imshow(image_grid)
+    plt.axis(False)
+    plt.grid(False)
+    # save the images
+    plt.savefig(save_path)
+    plt.close()
 
-    # save the images as a grid of size (n_rows, n_samples//n_rows)
-    save_image(generated_images, save_path, normalize=True, nrow=8)
+# helper function to plot learning curve
+def plot_learning_curve(g_losses, d_losses, savepath):
+    plt.figure()
+    plt.plot(g_losses, label="Generator Losses")
+    plt.plot(d_losses, label="Discriminator Losses")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.legend()
+    # plt.show()
+    plt.savefig(savepath)
+    plt.close()

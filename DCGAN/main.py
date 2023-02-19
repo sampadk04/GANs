@@ -8,9 +8,11 @@ from torch.optim import Adam
 
 from data import get_MNIST_dataloader
 
-from networks import Generator, Discriminator
+from networks import Generator, Discriminator, weights_init
 
 from train import train_gan
+
+from utils import plot_learning_curve
 
 
 
@@ -19,7 +21,7 @@ if __name__ == '__main__':
     # argument parsers
     parser = argparse.ArgumentParser(description='DCGANs on MNIST')
     
-    parser.add_argument('--num_epochs', type=int, default=150, help="No. of training epochs")
+    parser.add_argument('--num_epochs', type=int, default=151, help="No. of training epochs")
     parser.add_argument('--noise_size', type=int, 
     default=100, help="Size of the latent/noise vector")
     parser.add_argument('--feature_map_size_g', type=int, 
@@ -58,11 +60,23 @@ if __name__ == '__main__':
         output_size=1
     ).to(device)
 
+    # initialize their weights to follow normal distribution with mean=0 and std=0.02
+    # G.apply(weights_init)
+    # D.apply(weights_init)
+
+
     # define optimizers
+    '''
+    optimizers = {
+        'generator': Adam(params=G.parameters(), lr=opt.lr_g, betas=(0.5, 0.999)),
+        'discriminator': Adam(params=D.parameters(), lr=opt.lr_d, betas=(0.5, 0.999))
+    }
+    '''
     optimizers = {
         'generator': Adam(params=G.parameters(), lr=opt.lr_g),
         'discriminator': Adam(params=D.parameters(), lr=opt.lr_d)
     }
+    
     
     # define loss criterions
     criterions = {
@@ -88,3 +102,7 @@ if __name__ == '__main__':
 
     torch.save(generator.state_dict(), savepath_g)
     torch.save(discriminator.state_dict(), savepath_d)
+
+    # save the learning curve
+    plot_savepath = os.path.join(opt.image_save_path, 'learning_curve.png')
+    plot_learning_curve(g_losses, d_losses, plot_savepath)
