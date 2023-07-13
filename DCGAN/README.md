@@ -1,3 +1,3 @@
 # Deep Convolutional Generative Adversarial Networks
 
-`python main.py --num_epochs=200`
+Paper Link: https://arxiv.org/pdf/1511.06434.pdf
