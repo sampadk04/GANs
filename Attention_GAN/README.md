@@ -16,7 +16,7 @@ Original Paper Link: https://arxiv.org/pdf/1903.12296.pdf
 
 ## Presentation Slides
 
-Here is the link to the [Presentation Slides]().
+Here is the link to the [Presentation Slides](https://github.com/sampadk04/GANs/blob/main/Attention_GAN/slides/CVSN_Project_Presentation.pdf).
 
 ## Final Report
 
